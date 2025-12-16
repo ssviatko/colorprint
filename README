@@ -1,0 +1,80 @@
+* * *   C O L O R _ P R I N T   * * *
+
+The color_print library replaces printf and fprintf(stderr, ...) with three new
+functions:
+
+color_err_printf(errnoflag, "format", ...)
+
+This routine prints out errors to stderr, typically in RED although this can
+change depending on the theme installed. The first argument is an integer,
+either 0 or 1, depending on whether you want color_print to display the current
+errno string after the error message. There is no need to append a \n to the
+end of this format message as color_err_printf handles that automatically.
+
+color_debug("format", ...)
+
+This prints out debug messages, provided that debug flag is turned on when the
+color_print library is initialized. This allows programs that use it to carry
+a debug on/off flag that the user can set via an argument to make the
+color_debug messages show, or be silent. Debug messages print in a lovely
+diarrhea brown in all of the themes.
+
+color_printf("format", ...)
+
+This is the main color printing routine. Various escape sequences beginning
+with a * character can be embedded in the format. They are as follows:
+
+Theme-dependent colors:                     Default (green theme 0) color:
+
+*a      Begin HEADING color                 Dark Green
+*h      Begin HIGHLIGHT color               Light Green
+*b      Begin BULLET color                  Yellow
+*e      Begin ERROR color                   Bright Red
+*d      Return to default terminal color    (default)
+
+Other themes built in to the system: Blue (1), Red (2), Purple (3). By making
+the theme a settable parameter in your program a user can choose a different
+theme according to their questionable tastes.
+
+color_print also supports 256 colors and full RGB colors on terminals that
+support these modes. The Mac OS terminal supports 256 colors, while Windows
+and Linux both support full RGB. The syntax for specifying these colors
+is as follows:
+
+*2[color]           Specify foreground color from 256 color pallette
+*3[color]           Specify background color from 256 color pallette
+*5[red,green,blue]  Specify RGB components of foreground color
+*6[red,green,blue]  Specify RGB components of background color
+
+To get the original 16 colors used on the traditional CGA, EGA, and VGA text
+terminals, use colors 0-15 of the 256 color pallette.
+
+Example: highlight a word in traditional VGA cyan: (color #6)
+
+color_printf("I am highlighted in *2[6]cyan!!*d Isn't it pretty?\n");
+
+Also, color_print supports 16 pre-defined colors that were originally used
+on the Apple IIgs. They can be specified as follows:
+
+*c[color]           Specify Apple IIgs foreground color
+*g[color]           Specify Apple IIgs background color
+
+The HTML codes for these colors are as follows (they are quite pretty):
+
+0x000000 Black
+0xdd0033 Deep Red
+0x000099 Dark Blue
+0xdd22dd Purple
+0x007722 Dark Green
+0x555555 Dark Gray
+0x2222ff Medium Blue
+0x66aaff Light Blue
+0x885500 Brown
+0xff6600 Orange
+0xaaaaaa Light Gray
+0xff9988 Pink
+0x11dd00 Light Green
+0xffff00 Yellow
+0x44ff99 Aquamarine
+0xffffff White
+
