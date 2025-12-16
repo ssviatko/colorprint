@@ -106,7 +106,6 @@ char *color_rgb_bg      (uint8_t a_red, uint8_t a_green, uint8_t a_blue);
 char *color_rgb_blend   (const char *a_str, uint8_t a_begin_red, uint8_t a_begin_green, uint8_t a_begin_blue, uint8_t a_end_red, uint8_t a_end_green, uint8_t a_end_blue, int a_background);
 char *color_gs          (int a_color);
 char *color_gs_bg       (int a_color);
-char *fmtbld            (const char *format, ...);
 
 #ifdef __cplusplus
 }

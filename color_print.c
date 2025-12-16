@@ -242,27 +242,20 @@ char *color_256_bg(unsigned int a_color)
     return g_output;
 }
 
-char *fmtbld(const char *template_format, ...)
-{
-    g_output[0] = 0;
-    va_list args;
-    va_start(args, template_format);
-    vsprintf(g_output, template_format, args);
-    va_end(args);
-    return g_output;
-}
-
 void color_printf(const char *format, ...)
 {
-    char original_format[BUFFLEN];
-    char edited_format[BUFFLEN];
+    char original_format[BUFFLEN * 8];
+    char edited_format[BUFFLEN * 8];
     char c;
     size_t i = 0, j = 0;
     enum { COLLECT, FINDSTAR, PAREN_OPEN, PAREN_VALUE, PAREN_OPTION } state = COLLECT;
 
     // cache format string
     original_format[0] = 0;
-    strcpy(original_format, format);
+    va_list args;
+    va_start(args);
+    vsprintf(original_format, format, args);
+    va_end(args);
 
     while (i < strlen(original_format)) {
         c = original_format[i];
@@ -445,11 +438,7 @@ void color_printf(const char *format, ...)
         }
     }
     edited_format[j] = 0;
-
-    va_list args;
-    va_start(args);
-    vprintf(edited_format, args);
-    va_end(args);
+    printf(edited_format);
 }
 
 void color_err_printf(int a_strerror, const char *format, ...)
