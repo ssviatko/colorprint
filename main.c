@@ -5,12 +5,18 @@
 int main(int argc, char **argv)
 {
 	int nocolor = 0;
-	if (argc == 2)
+	int theme = 0;
+	if (argc == 3) {
 		nocolor = atoi(argv[1]);
+		theme = atoi(argv[2]);
+	} else {
+		printf("cptest <nocolor> <theme>\n");
+		exit(0);
+	}
 	color_init(nocolor, 1);
-	color_set_theme(0);
-	color_printf("*aThis is the color_print *htest*a program.*d\n");
-	color_printf("Here is a option list: *c[13]hi hi*d\n");
+	color_set_theme(theme);
+	color_printf("*aThis is the color_print *htest*a program.*d It also features *bbullets*d and *eerrors.*d Petty cool!\n");
+	color_printf("Here is a sweet orange: *c[9]hi hi*d\n");
 	color_debug("GS colors: (presented to you in the official debug color, diarrhea brown)\n");
 	for (int i = 1; i <= 15; ++i) {
 		color_printf(fmtbld("GS color %d: *c[%d]a really nice color. *d*c[0]*g[%d]looks good in inverse too.*d\n", i, i, i));
