@@ -206,9 +206,9 @@ char *color_rgb_blend(const char *a_str, uint8_t a_begin_red, uint8_t a_begin_gr
        return g_blend;
     }
     if (l_strlen == 1) {
-        strcat(g_blend, color_rgb(a_begin_red, a_begin_green, a_begin_blue));
+        if (!g_nocolor) strcat(g_blend, color_rgb(a_begin_red, a_begin_green, a_begin_blue));
         strcat(g_blend, a_str);
-        strcat(g_blend, CP_GREEN_COLOR_DEFAULT);
+        if (!g_nocolor) strcat(g_blend, CP_GREEN_COLOR_DEFAULT);
         return g_blend;
     }
     // at least 2 chars long so blend it
@@ -216,13 +216,15 @@ char *color_rgb_blend(const char *a_str, uint8_t a_begin_red, uint8_t a_begin_gr
         double l_red = (double)a_begin_red + ((((double)a_end_red - (double)a_begin_red) / (double)(l_strlen - 1)) * (double)i);
         double l_green = (double)a_begin_green + ((((double)a_end_green - (double)a_begin_green) / (double)(l_strlen - 1)) * (double)i);
         double l_blue = (double)a_begin_blue + ((((double)a_end_blue - (double)a_begin_blue) / (double)(l_strlen - 1)) * (double)i);
-        if (a_background)
-            strcat(g_blend, color_rgb_bg((uint8_t)l_red, (uint8_t)l_green, (uint8_t)l_blue));
-        else
-            strcat(g_blend, color_rgb((uint8_t)l_red, (uint8_t)l_green, (uint8_t)l_blue));
+        if (!g_nocolor) {
+            if (a_background)
+                strcat(g_blend, color_rgb_bg((uint8_t)l_red, (uint8_t)l_green, (uint8_t)l_blue));
+            else
+                strcat(g_blend, color_rgb((uint8_t)l_red, (uint8_t)l_green, (uint8_t)l_blue));
+        }
         strncat(g_blend, a_str + i, 1);
     }
-    strcat(g_blend, CP_GREEN_COLOR_DEFAULT);
+    if (!g_nocolor) strcat(g_blend, CP_GREEN_COLOR_DEFAULT);
     return g_blend;
 }
 
@@ -312,27 +314,51 @@ void color_printf(const char *format, ...)
             }
         } else if (state == PAREN_OPTION) {
             if (paren_char == 'c') {
-                edited_format[j] = 0;
-                strcat(edited_format, color_gs(paren_opts[0]));
-                j += strlen(g_output);
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_gs(paren_opts[0]));
+                    j += strlen(g_output);
+                }
                 state = COLLECT;
                 continue;
             } else if (paren_char == 'g') {
-                edited_format[j] = 0;
-                strcat(edited_format, color_gs_bg(paren_opts[0]));
-                j += strlen(g_output);
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_gs_bg(paren_opts[0]));
+                    j += strlen(g_output);
+                }
                 state = COLLECT;
                 continue;
             } else if (paren_char == '2') {
-                edited_format[j] = 0;
-                strcat(edited_format, color_256(paren_opts[0]));
-                j += strlen(g_output);
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_256(paren_opts[0]));
+                    j += strlen(g_output);
+                }
                 state = COLLECT;
                 continue;
             } else if (paren_char == '3') {
-                edited_format[j] = 0;
-                strcat(edited_format, color_256_bg(paren_opts[0]));
-                j += strlen(g_output);
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_256_bg(paren_opts[0]));
+                    j += strlen(g_output);
+                }
+                state = COLLECT;
+                continue;
+            } else if (paren_char == '5') {
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_rgb(paren_opts[0], paren_opts[1], paren_opts[2]));
+                    j += strlen(g_output);
+                }
+                state = COLLECT;
+                continue;
+            } else if (paren_char == '6') {
+                if (!g_nocolor) {
+                    edited_format[j] = 0;
+                    strcat(edited_format, color_rgb_bg(paren_opts[0], paren_opts[1], paren_opts[2]));
+                    j += strlen(g_output);
+                }
                 state = COLLECT;
                 continue;
             } else {
@@ -364,6 +390,16 @@ void color_printf(const char *format, ...)
             } else if (c == '3') {
                 state = PAREN_OPEN;
                 paren_char = '3';
+                ++i;
+                continue;
+            } else if (c == '5') {
+                state = PAREN_OPEN;
+                paren_char = '5';
+                ++i;
+                continue;
+            } else if (c == '6') {
+                state = PAREN_OPEN;
+                paren_char = '6';
                 ++i;
                 continue;
             } else if (c == 'h') {
