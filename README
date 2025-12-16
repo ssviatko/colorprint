@@ -78,3 +78,17 @@ The HTML codes for these colors are as follows (they are quite pretty):
 0x44ff99 Aquamarine
 0xffffff White
 
+And finally, color_print supports blending (see PNG file in this repository to
+get an idea of how this looks). To make color-blended text, first create the
+ANSI string using the following function:
+
+color_rgb_blend("message to blend", begin_red, begin_green, begin_blue, end_red, end_green, end_blue, background_flag);
+
+"background flag" specifies whether the blend will happen to the text itself
+or to the background color behind the text.
+
+This returns a char pointer to a buffer where blends are created. Copy the
+blend out of here after you create it, as it will overwrite the blend with new
+blends if you call this function repeatedly. (The same advice applies to the
+other "utility" functions like color_gs, color_256, color_rgb, etc, they
+operate on a set buffer that gets overwritten with every call.)
